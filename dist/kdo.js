@@ -6391,6 +6391,7 @@
             var e = 1.70158;
             return --t * t * ((e + 1) * t + e) + 1
         },
+      
         l = function() {
             function t(n) {
                 var o = this;
@@ -6409,6 +6410,15 @@
                 }, this.onDeviceMotion = this.onDeviceMotion.bind(this), this.onMessage = this.onMessage.bind(this), this.bindEvents()
             }
             var a = Math.PI;
+            var clampTheta = function(val){
+                if(val>3.2){
+                    val= 3.2;
+                }
+                else if(val<0.25) {
+                    val = 0.25;
+                } 
+                return val;
+            }
             return n(t, [{
                 key: "bindEvents",
                 value: function() {
@@ -6481,7 +6491,7 @@
                     var n = i.Math.degToRad(t.rotationRate.alpha),
                         a = i.Math.degToRad(t.rotationRate.beta);
                     r ? (this.phi = this.verticalPanning ? this.phi + n * this.velo : this.phi, this.theta -= a * this.velo * -1) : (this.verticalPanning && (this.phi = -90 === e ? this.phi + a * this.velo : this.phi - a * this.velo), this.theta = -90 === e ? this.theta - n * this.velo : this.theta + n * this.velo), this.adjustPhi()
-                    
+                    this.theta =  clampTheta(this.theta);
                 }
             }, {
                 key: "onMouseMove",
@@ -6500,15 +6510,10 @@
                     // console.log(x)   
                     // this.isUserInteracting = false;
                 
-                    console.log(this.theta);   
+                    // console.log(this.theta);   
                     this.isUserInteracting && (this.rotateEnd.set(t.clientX, t.clientY), this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart), this.rotateStart.copy(this.rotateEnd), this.phi = this.verticalPanning ? this.phi + 2 * a * this.rotateDelta.y / this.renderer.height * .3 : this.phi, this.theta += 2 * a * this.rotateDelta.x / this.renderer.width * .5, this.adjustPhi())
-
-                    if(this.theta>3.2){
-                        this.theta = 3.2;
-                    }
-                    else if(this.theta<0.25) {
-                        this.theta = 0.25;
-                    } 
+                    this.theta =  clampTheta(this.theta);
+                    
                 }
             }, {
                 key: "adjustPhi",
@@ -6523,7 +6528,7 @@
             }, {
                 key: "inertia",
                 value: function() {
-                    this.momentum && (this.rotateDelta.y *= .9, this.rotateDelta.x *= .9, this.theta += .005 * this.rotateDelta.x*0.7, this.phi = this.verticalPanning ? this.phi + .005 * this.rotateDelta.y : this.phi, this.adjustPhi())
+                    this.momentum && (this.rotateDelta.y *= .9, this.rotateDelta.x *= .9, this.theta += .005 * this.rotateDelta.x*0.07, this.phi = this.verticalPanning ? this.phi + .005 * this.rotateDelta.y : this.phi, this.adjustPhi())
                 }
             }, {
                 key: "onMouseUp",
@@ -6532,8 +6537,7 @@
                 }
             }, {
                 key: "update",
-                value: function() {
-                    // console.log('lol')
+                value: function() {                     
                     return (this.phi !== this.previousPhi || this.theta !== this.previousTheta) && (this.previousPhi = this.phi, this.previousTheta = this.theta, this.euler.set(this.phi, this.theta, 0, "YXZ"), this.orientation.setFromEuler(this.euler), this.camera.quaternion.copy(this.orientation), this.inertia(), !0)
                 }
             }]), t
@@ -6570,6 +6574,7 @@
             return n(t, [{
                 key: "play",
                 value: function() {
+                    
                     this.element.play && this.element.play()
                 }
             }, {
@@ -6639,6 +6644,7 @@
                 key: "render",
                 value: function() {
                     var t = this;
+                    console.log('hud:',this.hud)
                     this.target.appendChild(this.renderer.el), this.element.style.display = "none";
                     var e = function() {
                         t.animationFrameId = requestAnimationFrame(e);
