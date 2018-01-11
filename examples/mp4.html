@@ -3,25 +3,53 @@
 <head>
     <meta charset="utf-8">
     <title>Kaleidoscope mp4 video example</title>
-    <script type="text/javascript" charset="utf-8" src="https://cdn.rawgit.com/thiagopnts/kaleidoscope/master/dist/kaleidoscope.min.js"> </script>
+    <link rel="stylesheet" href="./vid.css">
+    <script type="text/javascript" charset="utf-8" src="../dist/kdo.js "></script>
+    <script type="text/javascript" charset="utf-8" src = "./vid.js"></script>
 </head>
 <body>
-    <div id="container360"></div>
+    <div id="container360">
+         <div id="main"></div>
+         <div id="hud"></div>
+    </div>
     <script type="text/javascript" charset="utf-8">
 (function() {
-    var containerSelector = '#container360';
+    var containerSelector = '#main';
     var viewer = new Kaleidoscope.Video({
         source: 'http://thiago.me/demo-360/cool.mp4',
         containerId: containerSelector,
         height: window.innerHeight,
-        width: window.innerWidth
+        width: window.innerWidth,
+        verticalPanning:false,
+        onDragStart: function(){console.log()},
+        hud:0
     });
     viewer.render();
+    // var intervalID = setInterval(function(){alert("Interval reached");viewer.centralize();}, 3000);
     window.onresize = function() {
         viewer.setSize({height: window.innerHeight, width: window.innerWidth});
+        
     };
     document.querySelector(containerSelector).addEventListener('touchend', viewer.play.bind(viewer));
 })();
+
+(function() {
+    var containerSelector = '#hud';
+    var viewer = new Kaleidoscope.Video({
+        source: 'http://thiago.me/demo-360/cool.mp4',
+        containerId: containerSelector,
+        height: window.innerHeight/4,
+        width: window.innerWidth/6,
+        verticalPanning:false,
+        hud:1
+    });
+    viewer.render();
+    window.onresize = function() {
+        viewer.setSize({height: window.innerHeight/4, width: window.innerWidth/6});
+    };
+    document.querySelector(containerSelector).addEventListener('touchend', viewer.play.bind(viewer));
+})();
+
     </script>
 </body>
 </html>
