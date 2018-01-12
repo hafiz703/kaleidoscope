@@ -2,6 +2,8 @@
     "object" == typeof exports && "undefined" != typeof module ? e(exports) : "function" == typeof define && define.amd ? define("kaleidoscope", ["exports"], e) : e(t.Kaleidoscope = {})
 }(this, function(t) {
     "use strict";
+   
+    
     var e = {
             isiOS: function() {
                 return /(ipad|iphone|ipod)/gi.test(navigator.userAgent)
@@ -6391,17 +6393,23 @@
             var e = 1.70158;
             return --t * t * ((e + 1) * t + e) + 1
         },
-      
+        
         l = function() {
             function t(n) {
                 var o = this;
-                r(this, t), Object.assign(this, n), this.el = this.renderer.el, this.theta = this.initialYaw * a / 180, this.phi = 0, this.velo = e.isiOS() ? .02 : 1.6, this.rotateStart = new i.Vector2, this.rotateEnd = new i.Vector2, this.rotateDelta = new i.Vector2, this.orientation = new i.Quaternion, this.euler = new i.Euler, this.momentum = !1, this.isUserInteracting = !1, this.addDraggableStyle(), this.onMouseMove = this.onMouseMove.bind(this), this.onMouseDown = this.onMouseDown.bind(this), this.onMouseUp = this.onMouseUp.bind(this), this.onTouchStart = function(t) {
-                    return o.onMouseDown({
+                  
+                r(this, t), Object.assign(this, n), this.el = this.renderer.el, this.theta = this.initialYaw * a / 180, this.phi = 0, this.velo = e.isiOS() ? .02 : 1.6, this.rotateStart = new i.Vector2, this.rotateEnd = new i.Vector2, this.rotateDelta = new i.Vector2, this.orientation = new i.Quaternion, this.euler = new i.Euler, this.momentum = !1, this.isUserInteracting = !1, this.addDraggableStyle(), this.onMouseMove = this.onMouseMove.bind(this), this.onMouseDown = this.onMouseDown.bind(this), this.onMouseUp = this.onMouseUp.bind(this),
+                 this.onTouchStart = function(t) {
+                    // console.log('t: ',t)
+                    return o.onMouseDown({                       
+                        // isHud:n.hud,
                         clientX: t.touches[0].pageX,
                         clientY: t.touches[0].pageY
                     })
-                }, this.onTouchMove = function(t) {
-                    return o.onMouseMove({
+                    
+                }, this.onTouchMove = function(t) {                                       
+                    return o.onMouseMove({   
+                        // isHud:n.hud,                      
                         clientX: t.touches[0].pageX,
                         clientY: t.touches[0].pageY
                     })
@@ -6410,13 +6418,16 @@
                 }, this.onDeviceMotion = this.onDeviceMotion.bind(this), this.onMessage = this.onMessage.bind(this), this.bindEvents()
             }
             var a = Math.PI;
+            let maxLeft = 3.2;
+            let maxRight = 0.25;
             var clampTheta = function(val){
-                if(val>3.2){
-                    val= 3.2;
+                if(val>maxLeft){
+                    val= maxLeft;
                 }
-                else if(val<0.25) {
-                    val = 0.25;
-                } 
+                else if(val<maxRight) {
+                    val = maxRight;
+                }
+                // console.log(val) 
                 return val;
             }
             return n(t, [{
@@ -6486,12 +6497,15 @@
                 key: "onDeviceMotion",
                 value: function(t) {
                     // console.log('motion')
+                    
                     var e, r = void 0 === t.portrait ? window.matchMedia("(orientation: portrait)").matches : t.portrait;
                     e = void 0 === t.orientation ? void 0 === window.orientation ? -90 : window.orientation : t.orientation;
                     var n = i.Math.degToRad(t.rotationRate.alpha),
                         a = i.Math.degToRad(t.rotationRate.beta);
                     r ? (this.phi = this.verticalPanning ? this.phi + n * this.velo : this.phi, this.theta -= a * this.velo * -1) : (this.verticalPanning && (this.phi = -90 === e ? this.phi + a * this.velo : this.phi - a * this.velo), this.theta = -90 === e ? this.theta - n * this.velo : this.theta + n * this.velo), this.adjustPhi()
+                     
                     this.theta =  clampTheta(this.theta);
+                     
                 }
             }, {
                 key: "onMouseMove",
@@ -6510,9 +6524,17 @@
                     // console.log(x)   
                     // this.isUserInteracting = false;
                 
-                    // console.log(this.theta);   
-                    this.isUserInteracting && (this.rotateEnd.set(t.clientX, t.clientY), this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart), this.rotateStart.copy(this.rotateEnd), this.phi = this.verticalPanning ? this.phi + 2 * a * this.rotateDelta.y / this.renderer.height * .3 : this.phi, this.theta += 2 * a * this.rotateDelta.x / this.renderer.width * .5, this.adjustPhi())
-                    this.theta =  clampTheta(this.theta);
+                    // console.log(this.theta);
+                      
+                    // console.log('hud:',t)
+                    
+                    // console.log('this',this.hud)
+                    if(!this.hud){
+                        this.isUserInteracting && (this.rotateEnd.set(t.clientX, t.clientY), this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart), this.rotateStart.copy(this.rotateEnd), this.phi = this.verticalPanning ? this.phi + 2 * a * this.rotateDelta.y / this.renderer.height * .3 : this.phi, this.theta += 2 * a * this.rotateDelta.x / this.renderer.width * .5, this.adjustPhi())
+                        this.theta =  clampTheta(this.theta);
+                    }else{
+
+                    }
                     
                 }
             }, {
@@ -6523,7 +6545,7 @@
             }, {
                 key: "onMouseDown",
                 value: function(t) {                     
-                    this.addDraggingStyle(), this.rotateStart.set(t.clientX, t.clientY), this.isUserInteracting = !0, this.momentum = !1, this.onDragStart && this.onDragStart()
+                    this.addDraggingStyle(), this.rotateStart.set(t.clientX, t.clientY), this.isUserInteracting = !0, this.momentum = !1, this.onDragStart && this.onDragStart(t)
                 }
             }, {
                 key: "inertia",
@@ -6559,6 +6581,7 @@
                     u = this.onDragStart,
                     c = this.onDragStop,
                     hud = this.hud;
+                 
                 this.renderer = new h({
                     height: n,
                     width: a
@@ -6568,7 +6591,8 @@
                     initialYaw: o,
                     verticalPanning: s,
                     onDragStart: u,
-                    onDragStop: c
+                    onDragStop: c,
+                    hud:hud
                 }), this.stopVideoLoop = this.stopVideoLoop.bind(this), this.onError = this.onError.bind(this), this.startVideoLoop = this.startVideoLoop.bind(this), this.needsUpdate = !1, this.scene = this.createScene(), this.scene.add(this.camera), this.element = this.getElement(), this.element.addEventListener("playing", this.startVideoLoop), this.element.addEventListener("pause", this.stopVideoLoop), this.element.addEventListener("ended", this.stopVideoLoop), this.texture = this.createTexture(), this.renderer.setTexture(this.texture), this.scene.getObjectByName("photo").children = [this.renderer.mesh], this.target = this.container ? this.container : document.querySelector(this.containerId)
             }
             return n(t, [{
@@ -6644,7 +6668,7 @@
                 key: "render",
                 value: function() {
                     var t = this;
-                    console.log('hud:',this.hud)
+                    // console.log('hud:',this.hud)
                     this.target.appendChild(this.renderer.el), this.element.style.display = "none";
                     var e = function() {
                         t.animationFrameId = requestAnimationFrame(e);

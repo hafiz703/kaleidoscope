@@ -13,15 +13,15 @@
          <div id="hud"></div>
     </div>
     <script type="text/javascript" charset="utf-8">
-(function() {
-    var containerSelector = '#main';
+let mainVid = function() {
+     
     var viewer = new Kaleidoscope.Video({
         source: 'http://thiago.me/demo-360/cool.mp4',
-        containerId: containerSelector,
+        containerId: '#main',
         height: window.innerHeight,
         width: window.innerWidth,
         verticalPanning:false,
-        onDragStart: function(){console.log()},
+        // onDragStart: function(t){console.log(t)},    
         hud:0
     });
     viewer.render();
@@ -30,25 +30,27 @@
         viewer.setSize({height: window.innerHeight, width: window.innerWidth});
         
     };
-    document.querySelector(containerSelector).addEventListener('touchend', viewer.play.bind(viewer));
-})();
+    document.querySelector('#main').addEventListener('touchend', viewer.play.bind(viewer));
+};
+mainVid();
 
-(function() {
-    var containerSelector = '#hud';
-    var viewer = new Kaleidoscope.Video({
+let hudVid =  function() {
+    
+    var viewerHud = new Kaleidoscope.Video({
         source: 'http://thiago.me/demo-360/cool.mp4',
-        containerId: containerSelector,
+        containerId: '#hud',
         height: window.innerHeight/4,
         width: window.innerWidth/6,
         verticalPanning:false,
         hud:1
     });
-    viewer.render();
+    viewerHud.render();
     window.onresize = function() {
-        viewer.setSize({height: window.innerHeight/4, width: window.innerWidth/6});
+        viewerHud.setSize({height: window.innerHeight/4, width: window.innerWidth/6});
     };
-    document.querySelector(containerSelector).addEventListener('touchend', viewer.play.bind(viewer));
-})();
+    document.querySelector('#hud').addEventListener('touchend', viewerHud.play.bind(viewerHud));
+};
+hudVid();
 
     </script>
 </body>
