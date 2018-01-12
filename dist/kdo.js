@@ -6532,9 +6532,8 @@
                     if(!this.hud){
                         this.isUserInteracting && (this.rotateEnd.set(t.clientX, t.clientY), this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart), this.rotateStart.copy(this.rotateEnd), this.phi = this.verticalPanning ? this.phi + 2 * a * this.rotateDelta.y / this.renderer.height * .3 : this.phi, this.theta += 2 * a * this.rotateDelta.x / this.renderer.width * .5, this.adjustPhi())
                         this.theta =  clampTheta(this.theta);
-                    }else{
-
-                    }
+                        window.mainAngle = this.theta;
+                    } 
                     
                 }
             }, {
@@ -6559,7 +6558,8 @@
                 }
             }, {
                 key: "update",
-                value: function() {                     
+                value: function() {
+                    this.theta = this.hud?window.mainAngle*-1:this.theta;                
                     return (this.phi !== this.previousPhi || this.theta !== this.previousTheta) && (this.previousPhi = this.phi, this.previousTheta = this.theta, this.euler.set(this.phi, this.theta, 0, "YXZ"), this.orientation.setFromEuler(this.euler), this.camera.quaternion.copy(this.orientation), this.inertia(), !0)
                 }
             }]), t
